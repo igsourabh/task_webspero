@@ -12,7 +12,7 @@ connectDB();
 
 const app = express();
 const port = 5005;
-const allowedOrigins = ["http://localhost:5173","http://13.127.199.56:8080"];
+const allowedOrigins = ["http://localhost:5173","http://13.127.199.56:8082"];
 app.use(
   cors({
     origin: allowedOrigins,
