@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "production",
+      name: "webspero_production",
       script: "./dist/index.js",
       watch: true,
       log_date_format: "YYYY-MM-DD HH:mm:ss",
