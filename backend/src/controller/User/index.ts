@@ -7,7 +7,6 @@ import { AuthenticatedRequest } from "../../middleware/auth";
 export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   try {
     var kms = 70;
-
     const currentUser = await UserModel.findById(req.user);
     const find: Users[] = (await UserModel.find({
       _id: { $ne: req.user },
@@ -20,7 +19,7 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
           $maxDistance: kms * 1000,
         },
       },
-    }).sort({ createdAt: -1 })) as Users[];
+    }).limit(5).sort({ createdAt: -1 })) as Users[];
     res.status(200).json({
       STATUS_MESSAGE: "SUCCESS",
       STATUS_RESPONSE: find,
