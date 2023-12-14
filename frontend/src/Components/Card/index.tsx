@@ -17,7 +17,7 @@ interface PropsData {
   };
 }
 
-const index: React.FC<PropsData> = ({ profilePic, name, zipcode, phone }) => {
+const index: React.FC<PropsData> = ({ profilePic, name, zipcode, phone ,lat,long}) => {
   return (
     <Card sx={{ maxWidth: 345,width:345 }}>
       <CardMedia sx={{ height: 140 }} image={profilePic} title="green iguana" />
@@ -30,6 +30,12 @@ const index: React.FC<PropsData> = ({ profilePic, name, zipcode, phone }) => {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Zipcode {zipcode}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          lat {lat}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          long {long}
         </Typography>
       </CardContent>
     </Card>
