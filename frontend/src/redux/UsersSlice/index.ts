@@ -1,28 +1,25 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../utils/axios";
 import swal from "sweetalert";
 
-export const Login: any = createAsyncThunk(
-  "Login",
-  async (formData, navigate: any) => {
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const response = await axios.post("/user/login", formData, config);
+export const Login: any = createAsyncThunk("Login", async (formData) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const response = await axios.post("/user/login", formData, config);
 
-      localStorage.setItem("token", response.data.STATUS_RESPONSE);
-      if (response.data) {
-        window.location.href = "/";
-      }
-      return response.data;
-    } catch (error: any) {
-      swal("Opps!", error.response.data.STATUS_RESPONSE, "error");
+    localStorage.setItem("token", response.data.STATUS_RESPONSE);
+    if (response.data) {
+      window.location.href = "/";
     }
+    return response.data;
+  } catch (error: any) {
+    swal("Opps!", error.response.data.STATUS_RESPONSE, "error");
   }
-);
+});
 
 export const Signup: any = createAsyncThunk("Signup", async (formData) => {
   try {
@@ -56,7 +53,7 @@ export const getAllUsers: any = createAsyncThunk("getAllUsers", async () => {
   return response.data.STATUS_RESPONSE;
 });
 
-export const MyProfile: any = createAsyncThunk("MyProfile", async (id) => {
+export const MyProfile: any = createAsyncThunk("MyProfile", async () => {
   try {
     const token = localStorage.getItem("token");
     const config = {
@@ -107,10 +104,10 @@ export const counter = createSlice({
   extraReducers: (builder) => {
     // --------------login---------------
 
-    builder.addCase(Login.pending, (state, action) => {
+    builder.addCase(Login.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(Login.fulfilled, (state, action) => {
+    builder.addCase(Login.fulfilled, (state) => {
       state.loading = false;
     });
     builder.addCase(Login.rejected, (state, action) => {
@@ -120,10 +117,10 @@ export const counter = createSlice({
     // --------------login---------------
 
     // --------------signup---------------
-    builder.addCase(Signup.pending, (state, action) => {
+    builder.addCase(Signup.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(Signup.fulfilled, (state, action) => {
+    builder.addCase(Signup.fulfilled, (state) => {
       state.loading = false;
     });
     builder.addCase(Signup.rejected, (state, action) => {
@@ -133,7 +130,7 @@ export const counter = createSlice({
     // --------------signup---------------
 
     // --------------MyProfile---------------
-    builder.addCase(MyProfile.pending, (state, action) => {
+    builder.addCase(MyProfile.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(MyProfile.fulfilled, (state, action) => {
@@ -147,10 +144,10 @@ export const counter = createSlice({
     // --------------MyProfile---------------
 
     // --------------UpdateProfile---------------
-    builder.addCase(UpdateProfile.pending, (state, action) => {
+    builder.addCase(UpdateProfile.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(UpdateProfile.fulfilled, (state, action) => {
+    builder.addCase(UpdateProfile.fulfilled, (state) => {
       state.loading = false;
     });
     builder.addCase(UpdateProfile.rejected, (state, action) => {
@@ -160,7 +157,7 @@ export const counter = createSlice({
     // --------------UpdateProfile---------------
 
     // --------------getAllUsers---------------
-    builder.addCase(getAllUsers.pending, (state, action) => {
+    builder.addCase(getAllUsers.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getAllUsers.fulfilled, (state, action) => {

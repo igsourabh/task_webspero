@@ -9,11 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllUsers } from "../../redux/UsersSlice";
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const App = () => {
   const dispatch = useDispatch();
-  const data = useSelector((state:any) => state.users.data);
+  const data = useSelector((state: any) => state.users.data);
   useEffect(() => {
     dispatch(getAllUsers());
 
@@ -42,7 +40,7 @@ const App = () => {
         }}
         maxWidth="xl">
         <Grid container spacing={2}>
-          {data.map((e:any,index:number) => (
+          {data.map((e: any, index: number) => (
             <Grid item key={index} xs={12} sm={6} md={3}>
               <CardComponent {...e} />
             </Grid>
