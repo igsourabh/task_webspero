@@ -10,30 +10,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { MyProfile, UpdateProfile } from "../../redux/UsersSlice";
 import { useState } from "react";
 import swal from "sweetalert";
+import "./style.css";
 interface Location {
   latitude: any;
   longitude: any;
 }
+interface FormData {
+  name: string;
+  email: string;
+  password?: string;
+  phone: string;
+  zipcode: string;
+  profilePic: File | null;
+  lat?: number | null;
+  long?: number | null;
+  location?: object | null;
+}
 const Update = () => {
   const dispatch = useDispatch();
   const profileData = useSelector((state: any) => state.users.Myprofile);
+  const [imageupload, setimageupload] = useState(false);
 
-  useEffect(() => {
-    dispatch(MyProfile());
-
-    return () => {};
-  }, [dispatch]);
-  interface FormData {
-    name: string;
-    email: string;
-    password?: string;
-    phone: string;
-    zipcode: string;
-    profilePic: File | null;
-    lat?: number | null;
-    long?: number | null;
-    location?: object | null;
-  }
   const [location, setLocation] = useState<Location>({
     latitude: 0,
     longitude: 0,
@@ -48,12 +45,89 @@ const Update = () => {
     profilePic: null,
   });
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (error) {
+      return swal(
+        "Oops!",
+        "plese turn on location permission for profile updating",
+        "error"
+      );
+    }
+    if (imageupload) {
+      return swal("Oops!", "plese wait while image is uploading", "error");
+    }
+    dispatch(UpdateProfile(formData));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const imagedetails = (element: any) => {
+    const pics = element.target.files[0];
+    if (pics === undefined) {
+      alert("undefined");
+      return;
+    }
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      setimageupload(true);
+      data.append("file", pics);
+      data.append("upload_preset", "chatapp");
+      data.append("cloud_name", "sourabhvaish");
+      fetch("https://api.cloudinary.com/v1_1/sourabhvaish/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            ["profilePic"]: data.url,
+          }));
+          setimageupload(false);
+          console.log(data.url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+  useEffect(() => {
+    dispatch(MyProfile());
+
+    return () => {};
+  }, []);
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.log(error);
+          swal("Oops!", error.message, "error");
+          setError(true);
+        }
+      );
+    } else {
+    }
+  }, []);
+
   useEffect(() => {
     if (profileData) {
       setFormData({
         name: profileData.name || "",
         email: profileData.email || "",
-        // password: "",
         phone: profileData.phone || "",
         zipcode: profileData.zipcode || "",
         profilePic: profileData.profilePic || "",
@@ -74,75 +148,6 @@ const Update = () => {
       }));
     }
   }, [profileData, location]);
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (error) {
-      return swal(
-        "Oops!",
-        "plese turn on location permission for profile updating",
-        "error"
-      );
-    }
-    dispatch(UpdateProfile(formData));
-    console.log(formData);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const imagedetails = (element: any) => {
-    const pics = element.target.files[0];
-    if (pics === undefined) {
-      alert("undefined");
-      return;
-    }
-    if (pics.type === "image/jpeg" || pics.type === "image/png") {
-      const data = new FormData();
-      data.append("file", pics);
-      data.append("upload_preset", "chatapp");
-      data.append("cloud_name", "sourabhvaish");
-      fetch("https://api.cloudinary.com/v1_1/sourabhvaish/image/upload", {
-        method: "post",
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            ["profilePic"]: data.url,
-          }));
-          console.log(data.url);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.log(error);
-          swal("Oops!", error.message, "error");
-          setError(true);
-        }
-      );
-    } else {
-    }
-  }, []);
   return (
     <Container
       sx={{
@@ -204,7 +209,7 @@ const Update = () => {
             fullWidth
             name="phone"
             label="Phone"
-            type="text"
+            type="number"
             id="phone"
             autoComplete=""
             value={formData.phone}
@@ -216,7 +221,7 @@ const Update = () => {
             fullWidth
             name="zipcode"
             label="Zipcode"
-            type="text"
+            type="number"
             id="zipcode"
             autoComplete=""
             value={formData.zipcode}

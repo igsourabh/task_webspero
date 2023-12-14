@@ -34,7 +34,6 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const Register = async (req: Request, res: Response) => {
-  console.log(req.body);
   try {
     const { email, password } = req.body;
     const find = await UserModel.findOne({ email });

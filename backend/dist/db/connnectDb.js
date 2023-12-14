@@ -18,7 +18,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 mongoose_1.default.set("strictQuery", false);
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const conn = yield mongoose_1.default.connect("mongodb+srv://sourabhsaffron07:grHYRvCP5mWjOnaX@cluster0.qrz2s32.mongodb.net/foodapp?retryWrites=true&w=majority");
+    const conn = yield mongoose_1.default.connect("mongodb+srv://sourabhsaffron07:grHYRvCP5mWjOnaX@cluster0.qrz2s32.mongodb.net/websperotask?retryWrites=true&w=majority");
     console.log(`mongo db connected ${conn.connection.host}`);
 });
 exports.connectDB = connectDB;
