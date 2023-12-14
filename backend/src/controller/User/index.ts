@@ -43,10 +43,12 @@ export const Register = async (req: Request, res: Response) => {
         STATUS_RESPONSE: "User with same email is already exists",
       });
     }
-    const salt = await bcrypt.genSalt(10);
-    const hashpassword = await bcrypt.hash(password, salt);
-    req.body.password = hashpassword;
-    console.log(req.body);
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashpassword = await bcrypt.hash(password, salt);
+      req.body.password = hashpassword;
+    }
+
     const create = await UserModel.create(req.body);
     res.status(200).json({
       STATUS_MESSAGE: "SUCCESS",
