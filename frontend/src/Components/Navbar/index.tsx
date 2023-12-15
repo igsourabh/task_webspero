@@ -3,13 +3,16 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/UsersSlice";
 const Navbar = () => {
-  const logout = () => {
+  const dispatch = useDispatch();
+  const handelLogout = () => {
+    dispatch(logout());
     localStorage.removeItem("token");
     window.location.href = "signin";
   };
   const data = localStorage.getItem("token");
-
   useEffect(() => {
     return () => {};
   }, []);
@@ -26,7 +29,7 @@ const Navbar = () => {
         </div>
         <div>
           {data !== null && (
-            <Button onClick={logout} color="inherit">
+            <Button onClick={handelLogout} color="inherit">
               Logout
             </Button>
           )}

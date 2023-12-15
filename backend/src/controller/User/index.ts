@@ -4,12 +4,13 @@ import { Users } from "./types";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthenticatedRequest } from "../../middleware/auth";
+let array: any = [];
 export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   try {
     var kms = 70;
     const currentUser = await UserModel.findById(req.user);
     const find: Users[] = (await UserModel.find({
-      _id: { $ne: req.user },
+      _id: { $in: array, $ne: req.user },
       location: {
         $near: {
           $geometry: {
@@ -19,7 +20,9 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
           $maxDistance: kms * 1000,
         },
       },
-    }).limit(5).sort({ createdAt: -1 })) as Users[];
+    })
+      .limit(5)
+      .sort({ createdAt: -1 })) as Users[];
     res.status(200).json({
       STATUS_MESSAGE: "SUCCESS",
       STATUS_RESPONSE: find,
@@ -115,7 +118,13 @@ export const Login = async (req: Request, res: Response) => {
         STATUS_RESPONSE: "Invalid email or password",
       });
     }
-    // console.log(find.id);
+
+    const isUserInArray = array.find((user: string) => user === find.id);
+    if (!isUserInArray) {
+      array.unshift(find.id);
+    }
+    console.log(array);
+
     const token = jwt.sign({ user: find.id }, "atombomb");
     res.status(200).json({
       STATUS_MESSAGE: "SUCCESS",
@@ -138,6 +147,23 @@ export const getLoggedinUser = async (
     res.status(200).json({
       STATUS_MESSAGE: "SUCCESS",
       STATUS_RESPONSE: find,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      STATUS_MESSAGE: "FAILURE",
+      STATUS_RESPONSE: error.message,
+    });
+  }
+};
+
+export const logout = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = array.filter((e: any) => e !== req.user);
+
+    array = data;
+    res.status(200).json({
+      STATUS_MESSAGE: "SUCCESS",
+      STATUS_RESPONSE: "logout",
     });
   } catch (error: any) {
     res.status(500).json({

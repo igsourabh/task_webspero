@@ -92,6 +92,24 @@ export const UpdateProfile: any = createAsyncThunk(
     }
   }
 );
+
+export const logout: any = createAsyncThunk("logout", async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token,
+      },
+    };
+
+    const response = await axios.post(`/user/logout`, config);
+
+    return response.data.STATUS_RESPONSE;
+  } catch (error: any) {
+    console.log(error.response.data.STATUS_RESPONSE);
+  }
+});
 export const counter = createSlice({
   name: "product",
   initialState: {
@@ -169,6 +187,19 @@ export const counter = createSlice({
       state.error = action.error;
     });
     // --------------getAllUsers---------------
+
+    // --------------logout---------------
+    builder.addCase(logout.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(logout.fulfilled, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(logout.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    });
+    // --------------logout---------------
   },
 });
 
